@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: kopidlno
+      POSTGRES_USER: kopidlno
+      POSTGRES_PASSWORD: kopidlno
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kopidlno -d kopidlno"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/kopidlno
+      DB_USERNAME: kopidlno
+      DB_PASSWORD: kopidlno
